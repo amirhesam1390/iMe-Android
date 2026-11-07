@@ -8,8 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17 (for SDK tools)
@@ -18,10 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # === تغییر اصلی: استفاده از پکیج‌های قدیمی‌تر سازگار با Gradle 5.4.1 ===
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
+          packages: 'platform-tools platforms;android-28 build-tools;28.0.3'
 
       - name: Set up JDK 8 (for build)
         uses: actions/setup-java@v4
@@ -30,8 +32,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > TMessagesProj/config/release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > TMessagesProj/config/release.keystore
 
       - name: Create google-services.json (placeholder)
         run: |
@@ -81,4 +82,3 @@ jobs:
         with:
           name: iMe-Release-APK
           path: TMessagesProj/build/outputs/apk/release/*.apk
-          if-no-files-found: warn
