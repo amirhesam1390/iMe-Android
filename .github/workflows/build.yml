@@ -12,14 +12,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 8
+      # مرحله ۱: JDK 17 فقط برای نصب Android SDK
+      - name: Set up JDK 17 (for SDK tools)
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      # مرحله ۲: JDK 8 برای کامپایل پروژه
+      - name: Set up JDK 8 (for build)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
 
       - name: Decode Keystore
         run: |
