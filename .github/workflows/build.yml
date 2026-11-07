@@ -12,7 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # مرحله ۱: JDK 17 فقط برای نصب Android SDK
       - name: Set up JDK 17 (for SDK tools)
         uses: actions/setup-java@v4
         with:
@@ -21,8 +20,9 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
 
-      # مرحله ۲: JDK 8 برای کامپایل پروژه
       - name: Set up JDK 8 (for build)
         uses: actions/setup-java@v4
         with:
