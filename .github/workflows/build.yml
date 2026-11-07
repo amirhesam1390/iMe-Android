@@ -19,11 +19,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # === تغییر اصلی: استفاده از پکیج‌های قدیمی‌تر سازگار با Gradle 5.4.1 ===
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-28 build-tools;28.0.3'
+
+      # === مرحله جدید: پاک کردن پلتفرم‌ها و build-tools جدیدتر ===
+      - name: Clean newer SDK platforms and build-tools
+        run: |
+          cd $ANDROID_HOME
+          echo "Before cleanup:"
+          ls platforms || true
+          ls build-tools || true
+          
+          # حذف هر پلتفرمی که android-28 نیست
+          find platforms -maxdepth 1 -type d ! -name 'platforms' ! -name 'android-28' -exec rm -rf {} + 2>/dev/null || true
+          
+          # حذف هر build-toolی که 28.0.3 نیست
+          find build-tools -maxdepth 1 -type d ! -name 'build-tools' ! -name '28.0.3' -exec rm -rf {} + 2>/dev/null || true
+          
+          echo "After cleanup:"
+          ls platforms || true
+          ls build-tools || true
 
       - name: Set up JDK 8 (for build)
         uses: actions/setup-java@v4
