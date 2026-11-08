@@ -36,6 +36,30 @@ jobs:
           ls platforms || true
           ls build-tools || true
 
+      - name: Install NDK 22.1.7171670
+        run: |
+          yes | sdkmanager "ndk;22.1.7171670"
+          echo "NDK installed at:"
+          ls -la $ANDROID_HOME/ndk/ || true
+
+      - name: Fix NDK platforms and toolchains directories
+        run: |
+          NDK_PATH="$ANDROID_HOME/ndk/22.1.7171670"
+          echo "NDK_PATH=$NDK_PATH"
+          ls -la "$NDK_PATH" || true
+          mkdir -p "$NDK_PATH/platforms/android-28"
+          mkdir -p "$NDK_PATH/platforms/android-21"
+          mkdir -p "$NDK_PATH/platforms/android-16"
+          # Gradle 5.4.1 همچنین به toolchains نیاز دارد
+          if [ ! -d "$NDK_PATH/toolchains" ]; then
+            echo "WARNING: toolchains directory not found, creating empty one"
+            mkdir -p "$NDK_PATH/toolchains"
+          fi
+          ls -la "$NDK_PATH/platforms"
+          echo "ndk.dir=$NDK_PATH" >> local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          cat local.properties
+
       - name: Setup Java 8 (for Gradle build)
         uses: actions/setup-java@v4
         with:
@@ -78,20 +102,6 @@ jobs:
             "configuration_version": "1"
           }
           EOF
-
-      - name: Fix NDK platforms directory
-        run: |
-          NDK_PATH="$ANDROID_HOME/ndk-bundle"
-          echo "NDK_PATH=$NDK_PATH"
-          ls -la "$NDK_PATH" || true
-          mkdir -p "$NDK_PATH/platforms/android-28"
-          mkdir -p "$NDK_PATH/platforms/android-21"
-          mkdir -p "$NDK_PATH/platforms/android-16"
-          ls -la "$NDK_PATH/platforms"
-          # اطمینان از اینکه Gradle مسیر NDK را درست پیدا کند
-          echo "ndk.dir=$NDK_PATH" >> local.properties
-          echo "sdk.dir=$ANDROID_HOME" >> local.properties
-          cat local.properties
 
       - name: Make gradlew executable
         run: chmod +x gradlew
