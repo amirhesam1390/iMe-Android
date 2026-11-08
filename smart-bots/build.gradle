@@ -68,3 +68,7 @@ dependencies {
 
     implementation "net.lingala.zip4j:zip4j:$zip4j_version"
 }
+
+kapt {
+    correctErrorTypes = true
+}
