@@ -10,48 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17 (for SDK tools)
+      - name: Setup Java 17 (for SDK tools)
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-28 build-tools;28.0.3'
 
-      # === مرحله جدید: پاک کردن پلتفرم‌ها و build-tools جدیدتر ===
       - name: Clean newer SDK platforms and build-tools
         run: |
           cd $ANDROID_HOME
           echo "Before cleanup:"
           ls platforms || true
           ls build-tools || true
-          
-          # حذف هر پلتفرمی که android-28 نیست
           find platforms -maxdepth 1 -type d ! -name 'platforms' ! -name 'android-28' -exec rm -rf {} + 2>/dev/null || true
-          
-          # حذف هر build-toolی که 28.0.3 نیست
           find build-tools -maxdepth 1 -type d ! -name 'build-tools' ! -name '28.0.3' -exec rm -rf {} + 2>/dev/null || true
-          
           echo "After cleanup:"
           ls platforms || true
           ls build-tools || true
 
-      - name: Set up JDK 8 (for build)
+      - name: Setup Java 8 (for Gradle build)
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 8
 
-      - name: Decode Keystore
+      - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > TMessagesProj/config/release.keystore
 
-      - name: Create google-services.json (placeholder)
+      - name: Create google-services.json placeholder
         run: |
           cat > TMessagesProj/google-services.json << 'EOF'
           {
@@ -85,17 +79,33 @@ jobs:
           }
           EOF
 
-      - name: Grant execute permission for gradlew
+      - name: Fix NDK platforms directory
+        run: |
+          NDK_PATH="$ANDROID_HOME/ndk-bundle"
+          echo "NDK_PATH=$NDK_PATH"
+          ls -la "$NDK_PATH" || true
+          mkdir -p "$NDK_PATH/platforms/android-28"
+          mkdir -p "$NDK_PATH/platforms/android-21"
+          mkdir -p "$NDK_PATH/platforms/android-16"
+          ls -la "$NDK_PATH/platforms"
+          # اطمینان از اینکه Gradle مسیر NDK را درست پیدا کند
+          echo "ndk.dir=$NDK_PATH" >> local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          cat local.properties
+
+      - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build release APK
         run: ./gradlew assembleRelease --stacktrace --no-daemon
         env:
-          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
 
       - name: Upload APK
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: iMe-Release-APK
           path: TMessagesProj/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
