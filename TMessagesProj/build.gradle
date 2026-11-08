@@ -60,7 +60,7 @@ dependencies {
     implementation "com.stripe:stripe-android:$stripe_version"
 
     implementation "me.zhanghai.android.materialratingbar:library:$material_rating_version"
-    implementation "com.google.android:flexbox:$flexbox_version"
+    implementation "com.google.android.flexbox:flexbox:$flexbox_version"
     implementation "com.android.support:multidex:$multidex_version"
     implementation 'com.google.code.gson:gson:2.8.5'
 

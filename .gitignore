@@ -64,3 +64,17 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+keystore.txt
+my-release-key.keystore
+*.keystore
+*.jks
+local.properties
+TMessagesProj/google-services.json
+
+# Local secrets
+keystore.txt
+my-release-key.keystore
+*.keystore
+*.jks
+local.properties
+TMessagesProj/google-services.json
