@@ -49,7 +49,7 @@ dependencies {
 
     implementation "android.arch.persistence.room:runtime:$room_version"
     implementation "android.arch.persistence.room:rxjava2:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
+    // kapt "android.arch.persistence.room:compiler:$room_version"
 
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     
