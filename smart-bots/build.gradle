@@ -74,8 +74,3 @@ kapt {
 }
 
 afterEvaluate {
-    println "=== KAPT CHECK ==="
-    configurations.kapt.each { println it }
-    println "=== ROOM IN CLASSPATH ==="
-    configurations.compileClasspath.each { if (it.name.contains("room")) println it }
-}
