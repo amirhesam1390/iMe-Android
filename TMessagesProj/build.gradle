@@ -64,7 +64,6 @@ dependencies {
     implementation "com.android.support:multidex:$multidex_version"
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    debugImplementation "com.amitshekhar.android:debug-db:$android_debug_db_version"
     implementation "de.hdodenhof:circleimageview:$circle_image_view_version"
 
     implementation "com.airbnb.android:lottie:$lottie"
