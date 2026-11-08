@@ -73,4 +73,3 @@ kapt {
     correctErrorTypes = true
 }
 
-afterEvaluate {
